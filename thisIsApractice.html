@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+#animals, #capital {
+	margin: 1px;
+	text-align: center;
+	width: 270px;
+}
+#header {
+	float: left;
+	display: inline-block;
+	width: 290px;
+	height: 600px;
+}
+#header h3{
+	text-align: center;
+}
+
+.content {
+	float: left;
+	height: 600px;
+	width: 600px;
+	text-align: center;
+}
+h2 {
+	text-align: center;
+}
+* {
+	padding: 0;
+	margin: 0;
+	font-family: 'Segoe UI', 'Trebuchet MS';
+}
+
+
+.btn {
+  border: 0;
+  border-radius: 5px;
+  padding: 10px;
+  width: 250px;
+  font-size: 19px;
+  text-decoration: none;
+  margin: 5px;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+}
+
+.btn:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+  box-shadow: 0px 1px 0px 0px;
+}
+
+.blue {
+  background-color: #55acee;
+  box-shadow: 0px 5px 0px 0px #3C93D5;
+}
+
+.blue:hover {
+  background-color: #6FC6FF;
+}
+
+.green {
+  background-color: #2ecc71;
+  box-shadow: 0px 5px 0px 0px #15B358;
+}
+
+.green:hover {
+  background-color: #48E68B;
+}
+
+.red {
+  background-color: #e74c3c;
+  box-shadow: 0px 5px 0px 0px #CE3323;
+}
+
+.red:hover {
+  background-color: #FF6656;
+}
+
+.purple {
+  background-color: #9b59b6;
+  box-shadow: 0px 5px 0px 0px #82409D;
+}
+
+.purple:hover {
+  background-color: #B573D0;
+}
+
+.orange {
+  background-color: #e67e22;
+  box-shadow: 0px 5px 0px 0px #CD6509;
+}
+
+.orange:hover {
+  background-color: #FF983C;
+}
+
+.yellow {
+  background-color: #f1c40f;
+  box-shadow: 0px 5px 0px 0px #D8AB00;
+}
+
+.yellow:hover {
+  background-color: #FFDE29;
+}
+.choice:disabled {
+	color: gray;
+}
+.hidden {
+	display: none;
+}
+#but {
+	width: 40px;
+	float: right;
+	margin-right: 90px;
+}
+
+</style>
+
+</head>
+<body>
+<div id="header">
+	<h3>Categories</h3>
+	<input type="button" id="animals" class="categories  btn blue" value="Animals" />
+	<input type="button" id="capital" class="categories  btn blue" value="Capital Cities" />
+</div>
+<div class="content">
+	<h2 id="test_status"></h2>
+	<div class="pad">
+		<div id="test" class="hidden">
+			<h3 id="question"></h3>
+			<input type="button" id="A" value="" name="choices" class="choice btn purple">
+			<input type="button" id="B" value="" name="choices" class="choice btn green">
+			<input type="button" id="C" value="" name="choices" class="choice btn blue">		
+			<input type="button" id="D" value="" name="choices" class="choice btn yellow">
+			<div id="wrongOrCheck"></div>
+		</div>
+	</div>
+</div>
+<script>
+var pos, test, max = 3, test_status, question, choice, choices, chA, chB, chC, correct = 0, cat, questionNum = 1, answer, ans;
+var trackQues = [];
+var questions = [];
+questions[0] =[
+    [ "What city is the capital of Bangladesh?", "Vienna", "Dhaka", "Minsk", "Manama", "B" ],
+    [ "What city is the capital of Belgium?", "Kinshasa", "Brasilia", "Bridgetown", "Brussels", "D" ],
+    [ "What city is the capital of India?", "Bangalore", "Pune", "New Delhi", "Mumbai", "C" ],
+    [ "What city is the capital of Germany?", "Helsinki", "Dhaka", "Berlin", "Tipuli", "C" ]
+	];
+questions[1] =[
+    [ "What is largest cat?", "Vienna", "Lion", "Minsk", "Manama", "B" ],
+    [ "What is the smallest fish?", "Paedocypris progenetica", "Pygocentrus nattereri", "Bridgetown", "Selachimorpha", "A" ],
+    [ "What bird can fly backwards?", "Owl", "Crane", "Parrots", "Hummingbirds",  "D" ],
+    [ "Which one is a flightless bird?", "Parrot", "Hornbill", "Peguin", "Crane",  "C" ]
+];
+
+
+function _(x){
+	return document.getElementById(x);
+}
+
+var p = document.getElementsByClassName('categories');
+for (v=0; v < p.length; v++) {
+	p[v].addEventListener('click', category);
+}
+
+function category() {
+	switch(this.id) {
+    case 'capital':
+        cat = 0
+        trackQues = []
+        questionNum = 1
+        rand()
+        break;
+    case 'animals':
+        cat = 1
+        trackQues = []
+        questionNum = 1
+        rand()
+        break;
+}
+}
+
+function rand() {
+	do {
+		pos = Math.floor(Math.random() * questions[cat].length);
+	  } while (existingQuestions());
+
+	  // Add the question to the tracker
+	  trackQues.push(pos);
+	choices = document.getElementsByName("choices");
+	for (x=0; x < choices.length; x++) {
+		choices[x].addEventListener('click', checkAnswer);
+		if (choices[x].id == answer){
+			ans = choices[x].value;
+		}
+	}
+
+	if(trackQues.length > max){
+		_("test_status").innerHTML = "Test Completed";
+		_("test_status").innerHTML += "<h2>You got "+correct+" of "+max+" questions correct</h2>";
+		pos = null;
+		cat = null;
+		trackQues = [];
+		correct = 0;
+		_('wrongOrCheck').innerHTML = '';
+		_('test').className = "hidden";
+		return false;
+	} else {
+		_("test_status").innerHTML = 'Question ' + questionNum + ' out of ' + max;
+		test = _("test");
+		test.className = '';
+		question = questions[cat][pos][0];
+		chA = questions[cat][pos][1];
+		chB = questions[cat][pos][2];
+		chC = questions[cat][pos][3];
+		chD = questions[cat][pos][4];
+		answer = questions[cat][pos][5]
+		_('wrongOrCheck').innerHTML = '';
+		_('question').innerHTML = question;
+		var newQues = document.getElementsByName('choices');
+		for (n=0; n < newQues.length; n++){
+			newQues[n].value = questions[cat][pos][n+1];
+			newQues[n].disabled = false;
+		}
+	}
+}
+
+
+function checkAnswer(){
+	choice = this.id;
+	if(choice == answer){
+		questionNum++;
+		_('wrongOrCheck').innerHTML = 'Correct';
+		_('wrongOrCheck').innerHTML += ' <input type="button" value="next" id="but" onclick="rand()">';
+		_('but').disabled = false;
+		for(var q=0; q<choices.length; q++){
+			choices[q].disabled = true;
+		}
+		correct++;
+	} else {
+		for(var q=0; q<choices.length; q++){
+		if(choices[q].id == questions[cat][pos][5]){
+			var ans = choices[q].value;
+		} 
+		}
+		questionNum++;
+		_('wrongOrCheck').innerHTML = 'wrong the correct answer is ' + ans;
+		_('wrongOrCheck').innerHTML += ' <input type="button" value="next" id="but" onclick="rand()">';		
+		for(var q=0; q<choices.length; q++){
+			choices[q].disabled = true;
+		}
+	}
+}
+
+function existingQuestions() {
+  for (var i = 0; i < trackQues.length; i++) {
+    if (trackQues[i] === pos) {
+      return true;
+    }
+  }
+  return false;
+}
+</script>
+</body>
+</html>
